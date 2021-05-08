@@ -26,18 +26,18 @@
               <v-progress-circular/>
             </v-row>
             <v-row>
-              <h3>대기 중 ...</h3>
+              <h3>대기 중</h3>
             </v-row>
           </v-row>
 
           <v-row v-if="done">
-            <v-btn block class="white--text" color="blue-grey" elevation="3">
+            <v-btn @click="downloadDone" block class="white--text" color="blue-grey" elevation="3">
               <v-icon dark left>
                 mdi-cloud-download
               </v-icon>
               Download
             </v-btn>
-            <v-btn block class="white--text" color="error" elevation="3">
+            <v-btn @click="deleteDone" block class="white--text" color="error" elevation="3">
               <v-icon dark left>
                 mdi-delete-forever
               </v-icon>
@@ -58,6 +58,8 @@ export default {
     processing: Boolean,
     waiting: Boolean,
     done: Boolean,
+    downloadDone: Function,
+    deleteDone: Function
   }
 }
 </script>

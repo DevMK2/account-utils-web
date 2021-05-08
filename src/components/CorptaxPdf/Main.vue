@@ -29,7 +29,7 @@
           <file-group>
             <file processing :name="pdf" :key="pdf" v-for="pdf in pdfProcessing"/>
             <file waiting :name="pdf" :key="pdf" v-for="pdf in pdfWaiting"/>
-            <file done :name="pdf" :key="pdf" v-for="pdf in pdfDone"/>
+            <file done :name="pdf" :key="pdf" :downloadDone="()=>downloadPdf(pdf)" :deleteDone="()=>deletePdf(pdf)" v-for="pdf in pdfDone"/>
           </file-group>
         </v-col>
       </v-row>
@@ -41,10 +41,12 @@
 import vue2Dropzone from 'vue2-dropzone'
 import File from '../common/output-file/File.vue';
 import FileGroup from '../common/output-file/FileGroup.vue';
+import apiMixin from './api'
 
 export default {
   name: 'CorptaxPdfMain',
   props: [ 'menu' ],
+  mixins: [apiMixin],
   components: {
     vueDropzone: vue2Dropzone, File,
       FileGroup
@@ -61,32 +63,16 @@ export default {
       pdfProcessing: ['processing.pdf'],
       pdfWaiting: ['wating1.pdf', 'wating2.pdf', 'wating3.pdf'],
       pdfDone: ['done1.pdf', 'done2.pdf', 'done3.pdf'],
-      getListInterval: null
+      checkPdfListInterval: null
     }
   },
   mounted() {
-    this.getListInterval = setInterval(this.getlist, 1000);
+    this.checkPdfListInterval = setInterval(this.checkPdfList, 1000);
   },
   beforeDestroy() {
-    clearInterval(this.getListInterval);
+    clearInterval(this.checkPdfListInterval);
   },
   methods: {
-    async check() {
-      try {
-        const res = await this.axios.get('/');
-        console.log(res);
-      } catch(e){
-        console.error(e);
-      }
-    },
-    async getlist() {
-      try {
-        const list = await this.axios.get('/corptax/list');
-        console.log(list.data);
-      } catch(e) {
-        console.error(e);
-      }
-    }
   },
 }
 </script>
