@@ -7,9 +7,30 @@
       <div class="dz-details">
         <v-container style="display:flex; flex-direction:column; justify-content:space-around; height: 100%">
           <v-row>
-            <h1>{{name}}</h1>
+            <h2>{{name}}</h2>
           </v-row>
-          <v-row>
+
+          <v-row v-if="processing" justify="center" align="center" style="flex-direction:column">
+            <v-row>
+              <v-progress-circular
+                indeterminate
+                color="primary"/>
+            </v-row>
+            <v-row>
+              <h3>처리 중 ...</h3>
+            </v-row>
+          </v-row>
+
+          <v-row v-if="waiting" justify="center" align="center" style="flex-direction:column">
+            <v-row>
+              <v-progress-circular/>
+            </v-row>
+            <v-row>
+              <h3>대기 중 ...</h3>
+            </v-row>
+          </v-row>
+
+          <v-row v-if="done">
             <v-btn block class="white--text" color="blue-grey" elevation="3">
               <v-icon dark left>
                 mdi-cloud-download
@@ -33,7 +54,10 @@
 export default {
   name: "File",
   props: {
-    name: String
+    name: String,
+    processing: Boolean,
+    waiting: Boolean,
+    done: Boolean,
   }
 }
 </script>

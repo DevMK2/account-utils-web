@@ -25,18 +25,18 @@
     </v-slide-item>
     </v-slide-group>
     <v-main :style="selectedBackground">
-      <HelloWorld :menu="selectedMenu"/>
+      <CorptaxPdfMain :menu="selectedMenu"/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import CorptaxPdfMain from './components/CorptaxPdf/Main';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
+    CorptaxPdfMain
   },
   data() {
     return {

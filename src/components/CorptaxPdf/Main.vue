@@ -27,7 +27,9 @@
         </v-col>
         <v-col cols="5.5">
           <file-group>
-            <file :name="corptaxPdf" :key="corptaxPdf" v-for="corptaxPdf in corptaxPdfList"/>
+            <file processing :name="pdf" :key="pdf" v-for="pdf in pdfProcessing"/>
+            <file waiting :name="pdf" :key="pdf" v-for="pdf in pdfWaiting"/>
+            <file done :name="pdf" :key="pdf" v-for="pdf in pdfDone"/>
           </file-group>
         </v-col>
       </v-row>
@@ -37,11 +39,11 @@
 
 <script>
 import vue2Dropzone from 'vue2-dropzone'
-import File from './output/File.vue';
-import FileGroup from './output/FileGroup.vue';
+import File from '../common/output-file/File.vue';
+import FileGroup from '../common/output-file/FileGroup.vue';
 
 export default {
-  name: 'HelloWorld',
+  name: 'CorptaxPdfMain',
   props: [ 'menu' ],
   components: {
     vueDropzone: vue2Dropzone, File,
@@ -56,7 +58,9 @@ export default {
           dictDefaultMessage: "<i class='fa fa-cloud-upload'></i>Upload .zip Files",
           headers: { "My-Awesome-Header": "header value" }
       },
-      corptaxPdfList: ['149.pdf', '143.pdf', 'a.pdf'],
+      pdfProcessing: ['processing.pdf'],
+      pdfWaiting: ['wating1.pdf', 'wating2.pdf', 'wating3.pdf'],
+      pdfDone: ['done1.pdf', 'done2.pdf', 'done3.pdf'],
       getListInterval: null
     }
   },
