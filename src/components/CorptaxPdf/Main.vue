@@ -20,7 +20,12 @@
       </v-row>
       <v-row>
         <v-col cols="5.5">
-          <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions"></vue-dropzone>
+          <vue-dropzone 
+            id="corptax-pdf-dropzone" 
+            ref="myVueDropzone" 
+            @vdropzone-error="afterUploadZipFailed"
+            @vdropzone-file-added="beforeUploadZip"
+            :options="dropzoneOptions"/>
         </v-col>
         <v-col cols="1" style="display:flex; justify-content:center; align-items:flex-start">
           <v-icon x-large color="blue darken-2">mdi-arrow-right-thick</v-icon>
@@ -63,16 +68,65 @@ export default {
       pdfProcessing: ['processing.pdf'],
       pdfWaiting: ['wating1.pdf', 'wating2.pdf', 'wating3.pdf'],
       pdfDone: ['done1.pdf', 'done2.pdf', 'done3.pdf'],
-      checkPdfListInterval: null
+      checkPdfListInterval: null,
+      checkWaitingListInterval: null,
     }
   },
   mounted() {
-    this.checkPdfListInterval = setInterval(this.checkPdfList, 1000);
+    this.checkPdfListInterval = setInterval(this.checkDoneList, 1000);
   },
   beforeDestroy() {
     clearInterval(this.checkPdfListInterval);
   },
+  watch: {
+    pdfWaiting() {
+      this.checkAndProcessWatingList();
+    },
+    pdfProcessing() {
+      this.checkAndProcessWatingList();
+    }
+  },
   methods: {
+    async checkDoneList() {
+      this.pdfDone = [...await this.getPdfList(), 'done1.pdf', 'done2.pdf', 'processing.pdf'];
+      // processing list 중 doneList에 있는 파일은 삭제
+      this.pdfProcessing = this.pdfProcessing.filter(pdf => !this.pdfDone.includes(pdf));
+    },
+    checkAndProcessWatingList() {
+      // processing list 가 비었으면 wating list 에서 하나 실행.
+      if(this.pdfProcessing.length !== 0) {
+        return;
+      }
+      const pdf = this.pdfWaiting.shift();
+      this.processPdf(pdf);
+      this.pdfProcessing.push(pdf);
+    },
+    beforeUploadZip(file) {
+      console.log('beforeUploadZip', file);
+      return false;
+    },
+    afterUploadZip(file) {
+      console.log('afterUploadZip', file);
+      //this.pdfWaiting.push('a');
+    },
+    afterUploadZipFailed(file) {
+      const elements = document.querySelectorAll(".dz-file-preview");
+      elements.forEach(element => {
+        const filename = element.querySelectorAll(".dz-filename span")[0];
+        if(!filename) {
+          return;
+        }
+
+        if(filename.textContent === file.name) {
+          const errorMessage = element.querySelector('.dz-error-message span');
+          if(!file.name.includes('.zip')) {
+            errorMessage.textContent=".zip 으로 압축된 파일만 업로드할 수 있습니다.";
+          } else {
+            errorMessage.textContent="원인을 알 수 없는 에러입니다.";
+          }
+        }
+      });
+    }
   },
 }
 </script>
