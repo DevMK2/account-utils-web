@@ -12,7 +12,7 @@
 import vue2Dropzone from 'vue2-dropzone'
 
 export default {
-  name: 'DropzoneForm',
+  name: 'FileInputForm',
   components: {
     vueDropzone: vue2Dropzone, 
   },

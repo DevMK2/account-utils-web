@@ -52,7 +52,7 @@
 
 <script>
 export default {
-  name: "File",
+  name: "FileOutput",
   props: {
     name: String,
     processing: Boolean,
