@@ -20,12 +20,7 @@
       </v-row>
       <v-row>
         <v-col cols="5.5">
-          <vue-dropzone 
-            id="corptax-pdf-dropzone" 
-            ref="myVueDropzone" 
-            @vdropzone-error="afterUploadZipFailed"
-            @vdropzone-file-added="beforeUploadZip"
-            :options="dropzoneOptions"/>
+          <dropzone-form/>
         </v-col>
         <v-col cols="1" style="display:flex; justify-content:center; align-items:flex-start">
           <v-icon x-large color="blue darken-2">mdi-arrow-right-thick</v-icon>
@@ -43,28 +38,18 @@
 </template>
 
 <script>
-import vue2Dropzone from 'vue2-dropzone'
-import File from '../common/output-file/File.vue';
-import FileGroup from '../common/output-file/FileGroup.vue';
+import File from './Output/File.vue';
+import FileGroup from './Output/FileGroup.vue';
 import apiMixin from './api'
+import DropzoneForm from './Input/DropzoneForm.vue';
 
 export default {
   name: 'CorptaxPdfMain',
   props: [ 'menu' ],
   mixins: [apiMixin],
-  components: {
-    vueDropzone: vue2Dropzone, File,
-      FileGroup
-  },
+  components: { DropzoneForm, File, FileGroup },
   data: () => {
     return {
-      dropzoneOptions: {
-          url: '/zip-open',
-          thumbnailWidth: 200,
-          maxFilesize: 100,
-          dictDefaultMessage: "<i class='fa fa-cloud-upload'></i>Upload .zip Files",
-          headers: { "My-Awesome-Header": "header value" }
-      },
       pdfProcessing: ['processing.pdf'],
       pdfWaiting: ['wating1.pdf', 'wating2.pdf', 'wating3.pdf'],
       pdfDone: ['done1.pdf', 'done2.pdf', 'done3.pdf'],
@@ -101,32 +86,6 @@ export default {
       this.processPdf(pdf);
       this.pdfProcessing.push(pdf);
     },
-    beforeUploadZip(file) {
-      console.log('beforeUploadZip', file);
-      return false;
-    },
-    afterUploadZip(file) {
-      console.log('afterUploadZip', file);
-      //this.pdfWaiting.push('a');
-    },
-    afterUploadZipFailed(file) {
-      const elements = document.querySelectorAll(".dz-file-preview");
-      elements.forEach(element => {
-        const filename = element.querySelectorAll(".dz-filename span")[0];
-        if(!filename) {
-          return;
-        }
-
-        if(filename.textContent === file.name) {
-          const errorMessage = element.querySelector('.dz-error-message span');
-          if(!file.name.includes('.zip')) {
-            errorMessage.textContent=".zip 으로 압축된 파일만 업로드할 수 있습니다.";
-          } else {
-            errorMessage.textContent="원인을 알 수 없는 에러입니다.";
-          }
-        }
-      });
-    }
   },
 }
 </script>
