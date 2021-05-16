@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
 import apiMixin from '../api'
 import FileOutput from './FileOutput.vue'
 
@@ -16,41 +17,41 @@ export default {
   mixins: [apiMixin],
   data: () => {
     return {
-      pdfProcessing: ['processing.pdf'],
-      pdfWaiting: ['wating1.pdf', 'wating2.pdf', 'wating3.pdf'],
-      pdfDone: ['done1.pdf', 'done2.pdf', 'done3.pdf'],
       checkPdfListInterval: null,
     }
   },
   mounted() {
     this.checkPdfListInterval = setInterval(this.checkDoneList, 1000);
   },
+  computed: {
+    ...mapState({
+      pdfWaiting : state => state.corptaxPdfStore.pdfWaiting,
+      pdfProcessing : state => state.corptaxPdfStore.pdfProcessing,
+      pdfDone : state => state.corptaxPdfStore.pdfDone
+    }),
+    ...mapGetters(['isPdfProcessing'])
+  },
   beforeDestroy() {
     clearInterval(this.checkPdfListInterval);
   },
-  watch: {
-    pdfWaiting() {
-      this.checkAndProcessWatingList();
-    },
-    pdfProcessing() {
-      this.checkAndProcessWatingList();
-    }
-  },
   methods: {
     async checkDoneList() {
-      this.pdfDone = [...await this.getPdfList(), 'done1.pdf', 'done2.pdf', 'processing.pdf'];
-      // processing list 중 doneList에 있는 파일은 삭제
-      this.pdfProcessing = this.pdfProcessing.filter(pdf => !this.pdfDone.includes(pdf));
-    },
-    checkAndProcessWatingList() {
-      // processing list 가 비었으면 wating list 에서 하나 실행.
-      if(this.pdfProcessing.length !== 0) {
+      const pdfDone = await this.getPdfList();
+      this.$store.commit({ type: 'setPdfDone', pdfDone });
+      this.$store.commit({ type: 'pushPdfDone', pdf: 'done1.pdf' });
+      this.$store.commit({ type: 'pushPdfDone', pdf: 'done2.pdf' });
+      this.$store.commit({ type: 'pushPdfDone', pdf: 'processing.pdf' });
+
+      await this.$store.dispatch('updatePdfProcessing')
+
+      if(this.isPdfProcessing) {
         return;
       }
-      const pdf = this.pdfWaiting.shift();
+      const pdf = this.pdfWaiting[0];
       this.processPdf(pdf);
-      this.pdfProcessing.push(pdf);
-    },
+      this.$store.commit('popPdfWaiting');
+      this.$store.commit({ type: 'pushPdfProcessing', pdf });
+    }
   },
 }
 </script>

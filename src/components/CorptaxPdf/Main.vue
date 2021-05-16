@@ -32,6 +32,6 @@ import FileOutputForm from './Output/FileOutputForm.vue';
 export default {
   name: 'CorptaxPdfMain',
   props: [ 'menu' ],
-  components: { Tooltip, FileInputForm, FileOutputForm },
+  components: { Tooltip, FileInputForm, FileOutputForm }
 }
 </script>
