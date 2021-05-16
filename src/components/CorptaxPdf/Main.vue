@@ -5,16 +5,7 @@
         <v-col class="mb-4">
           <h1 :style="'color:'+this.menu.color" class="display-1 font-weight-bold mb-3">
             {{this.menu.title}}
-            <v-tooltip right>
-              <template v-slot:activator="{on, attrs}">
-                <v-icon color="grey" v-bind="attrs" v-on="on">
-                  mdi-help-circle-outline 
-                </v-icon>
-              </template>
-              <span>
-                <p v-html="this.menu.description"/>
-              </span>
-            </v-tooltip>
+            <tooltip :inner-msg="this.menu.description"/>
           </h1>
         </v-col>
       </v-row>
@@ -38,6 +29,7 @@
 </template>
 
 <script>
+import Tooltip from '../common/Tooltip';
 import File from './Output/File.vue';
 import FileGroup from './Output/FileGroup.vue';
 import apiMixin from './api'
@@ -47,7 +39,7 @@ export default {
   name: 'CorptaxPdfMain',
   props: [ 'menu' ],
   mixins: [apiMixin],
-  components: { DropzoneForm, File, FileGroup },
+  components: { Tooltip, DropzoneForm, File, FileGroup },
   data: () => {
     return {
       pdfProcessing: ['processing.pdf'],
