@@ -36,21 +36,9 @@ export default {
   },
   methods: {
     async checkDoneList() {
-      const pdfDone = await this.getPdfList();
-      this.$store.commit({ type: 'setPdfDone', pdfDone });
-      this.$store.commit({ type: 'pushPdfDone', pdf: 'done1.pdf' });
-      this.$store.commit({ type: 'pushPdfDone', pdf: 'done2.pdf' });
-      this.$store.commit({ type: 'pushPdfDone', pdf: 'processing.pdf' });
-
-      await this.$store.dispatch('updatePdfProcessing')
-
-      if(this.isPdfProcessing) {
-        return;
-      }
-      const pdf = this.pdfWaiting[0];
-      this.processPdf(pdf);
-      this.$store.commit('popPdfWaiting');
-      this.$store.commit({ type: 'pushPdfProcessing', pdf });
+      await this.$store.dispatch('updatePdfDone');
+      await this.$store.dispatch('updatePdfProcessingComparingPdfDone');
+      await this.$store.dispatch('updatePdfWaitingIfNoPdfProcessing');
     }
   },
 }
