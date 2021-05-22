@@ -1,7 +1,7 @@
 <template>
   <vue-dropzone 
     id="corptax-pdf-dropzone" 
-    ref="myVueDropzone" 
+    ref="vueDropzone" 
     @vdropzone-file-added="beforeUploadZip"
     @vdropzone-success="afterUploadZip"
     @vdropzone-error="afterUploadZipFailed"
@@ -35,6 +35,7 @@ export default {
     async afterUploadZip(file) {
       console.log('afterUploadZip', file);
       await this.$store.dispatch('updatePdfWaitingAfterUpload', file);
+      this.$refs.vueDropzone.removeFile(file);
     },
     afterUploadZipFailed(file) {
       const elements = document.querySelectorAll(".dz-file-preview");
