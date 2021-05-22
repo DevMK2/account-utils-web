@@ -12,10 +12,12 @@ const store = {
     pdfProcessing: ["processing.pdf"],
     pdfWaiting: ["wating1.pdf", "wating2.pdf", "wating3.pdf"],
     pdfDone: ["done1.pdf", "done2.pdf", "done3.pdf"],
+    pdfFailed: []
     /**@FIXME temp for test */
   },
   getters: {
     isPdfProcessing: state => state.pdfProcessing.length !== 0,
+    isNoPdfWaiting: state => state.pdfWaiting.length === 0,
     /**@FIXME temp for test */
     doubleCount: (state) => state.count * 2,
     fourtimeCount: (state, getters) => getters.doubleCount * 2,
@@ -52,6 +54,9 @@ const store = {
     popPdfDone(state) {
       state.pdfDone.pop();
     },
+    pushPdfFailed(state, payload) {
+      state.pdfFailed.push(payload.pdf);
+    },
   },
   actions: {
     incrementAsync (context, payload) {
@@ -78,14 +83,35 @@ const store = {
         pdfProcessing: context.state.pdfProcessing.filter(pdf => !context.state.pdfDone.includes(pdf))
       });
     },
-    async updatePdfWaitingIfNoPdfProcessing(context) {
+    updatePdfWaitingIfNoPdfProcessing(context) {
       if(context.getters.isPdfProcessing) {
         return;
       }
+      if(context.getters.isNoPdfWaiting) {
+        return;
+      }
+
       const pdf = context.state.pdfWaiting[0];
-      await api.processPdf(pdf);
-      context.commit('popPdfWaiting');
+
       context.commit({ type: 'pushPdfProcessing', pdf });
+      context.commit('popPdfWaiting');
+
+      api.processPdfAsync(pdf, err => {
+          console.error(err);
+          context.dispatch('updatePdfProcessingIfFailed', pdf)
+      });
+    },
+    async updatePdfProcessingIfFailed(context, failedPdf) {
+    // @TODO logic check
+      console.error('[context] pdf processing failed')
+      context.commit({
+        type: 'setPdfProcessing',
+        pdfProcessing: context.state.pdfProcessing.filter(pdf => pdf !== failedPdf)
+      });
+      context.commit({
+        type: 'pushPdfFailed', pdf: failedPdf
+      });
+      context.dispatch('updatePdfWaitingIfNoPdfProcessing');
     },
     async updatePdfWaitingAfterUpload(context, uploaded) {
       const targetPdf = uploaded.name.replace('.zip','.pdf');

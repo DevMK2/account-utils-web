@@ -44,6 +44,20 @@
               Delete
             </v-btn>
           </v-row>
+
+          <v-row v-if="failed" justify="center" align="center" style="flex-direction:column">
+            <v-row>
+              <v-icon>
+                mdi-exclamation-thick
+              </v-icon>
+            </v-row>
+            <v-row>
+              <h3>실패</h3>
+            </v-row>
+            <v-row>
+              <p>{{failedMsg}}</p>
+            </v-row>
+          </v-row>
         </v-container>
       </div>
     </div>
@@ -58,8 +72,13 @@ export default {
     processing: Boolean,
     waiting: Boolean,
     done: Boolean,
+    failed: Boolean,
     downloadDone: Function,
-    deleteDone: Function
+    deleteDone: Function,
+    failedMsg: {
+      type: String,
+      default: "실패했습니다."
+    }
   }
 }
 </script>

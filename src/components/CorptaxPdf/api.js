@@ -10,15 +10,13 @@ const methods = {
       return [];
     }
   },
-  async processPdf(fileName) {
-    console.log(`process /corptax?id=${fileName.replace('.pdf', '')}`);
-    return;
-    //try {
-    //  const result = await this.axios.post(`/corptax?id=${fileName.replace('.pdf', '')}`);
-    //  console.log(result)
-    //} catch(e){
-    //  console.error(e);
-    //}
+  processPdfAsync(fileName, cbFailed) {
+    const id = fileName.replace('.pdf', '');
+    console.log(`process /corptax?id=${id}`);
+
+    axios.post(`/corptax?id=${id}`)
+      .then(result => console.log(result))
+      .catch(error => cbFailed(error));
   },
   async downloadPdf(fileName) {
     console.log(`download /corptax?id=${fileName.replace('.pdf', '')}`);

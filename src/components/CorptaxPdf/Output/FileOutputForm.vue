@@ -3,6 +3,7 @@
     <file-output processing :name="pdf" :key="pdf" v-for="pdf in pdfProcessing"/>
     <file-output waiting :name="pdf" :key="pdf" v-for="pdf in pdfWaiting"/>
     <file-output done :name="pdf" :key="pdf" :downloadDone="()=>downloadPdf(pdf)" :deleteDone="()=>deletePdf(pdf)" v-for="pdf in pdfDone"/>
+    <file-output failed :name="pdf" :key="pdf" v-for="pdf in pdfFailed"/>
   </v-item-group>
 </template>
 
@@ -25,9 +26,10 @@ export default {
   },
   computed: {
     ...mapState({
-      pdfWaiting : state => state.corptaxPdfStore.pdfWaiting,
-      pdfProcessing : state => state.corptaxPdfStore.pdfProcessing,
-      pdfDone : state => state.corptaxPdfStore.pdfDone
+      pdfWaiting: state => state.corptaxPdfStore.pdfWaiting,
+      pdfProcessing: state => state.corptaxPdfStore.pdfProcessing,
+      pdfDone: state => state.corptaxPdfStore.pdfDone,
+      pdfFailed: state => state.corptaxPdfStore.pdfFailed
     }),
     ...mapGetters(['isPdfProcessing'])
   },
