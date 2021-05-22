@@ -32,9 +32,9 @@ export default {
       console.log('beforeUploadZip', file);
       return false;
     },
-    afterUploadZip(file) {
+    async afterUploadZip(file) {
       console.log('afterUploadZip', file);
-      //this.pdfWaiting.push('a');
+      await this.$store.dispatch('updatePdfWaitingAfterUpload', file);
     },
     afterUploadZipFailed(file) {
       const elements = document.querySelectorAll(".dz-file-preview");

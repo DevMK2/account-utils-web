@@ -86,6 +86,10 @@ const store = {
       await api.processPdf(pdf);
       context.commit('popPdfWaiting');
       context.commit({ type: 'pushPdfProcessing', pdf });
+    },
+    async updatePdfWaitingAfterUpload(context, uploaded) {
+      const targetPdf = uploaded.name.replace('.zip','.pdf');
+      await context.commit({ type: 'pushPdfWaiting', pdf: targetPdf });
     }
   }
 };
